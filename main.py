@@ -100,15 +100,11 @@ def monitor_tickets():
 
     print("Начинаем мониторинг (поиск каждые 30 сек)...")
 
-    known_links = load_known_links()
-
-    if not known_links:
-        print("Первый запуск. Собираем базу текущих билетов...")
+    if not os.path.exists(LINKS_FILE):
+        print("Файл базы не найден. Создаём базу текущих билетов...")
 
         initial_data = get_intickets_data()
-
-        for item in initial_data:
-            known_links.add(item["url"])
+        known_links = {item["url"] for item in initial_data}
 
         save_known_links(known_links)
 
@@ -126,24 +122,16 @@ def monitor_tickets():
                 except Exception as e:
                     print(
                         f"[{current_time}] Ошибка отправки в ТГ "
-                        f"({chat_id}): {e}"
+                        f"для {chat_id}: {e}"
                     )
 
-            print(
-                f"[{current_time}] Сирена активна "
-                f"для {len(active_alarms)} чел."
-            )
-
-            time.sleep(30)
-            continue
-
+        known_links = load_known_links()
         current_data = get_intickets_data()
         new_tickets = []
 
         for item in current_data:
             if item["url"] not in known_links:
                 new_tickets.append(item)
-                known_links.add(item["url"])
 
         if new_tickets:
             message = (
@@ -162,6 +150,7 @@ def monitor_tickets():
             for chat_id in CHAT_IDS:
                 active_alarms.add(str(chat_id))
 
+            known_links.update(item["url"] for item in new_tickets)
             save_known_links(known_links)
 
             print(
@@ -179,9 +168,8 @@ def monitor_tickets():
                 except Exception as e:
                     print(
                         f"[{current_time}] Ошибка отправки в ТГ "
-                        f"({chat_id}): {e}"
+                        f"для {chat_id}: {e}"
                     )
-
         else:
             print(
                 f"[{current_time}] Новых билетов не найдено. "
