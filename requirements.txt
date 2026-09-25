@@ -1,11 +1,4 @@
 requests
-bs4
-time
-telebot
-telebot
-telebot.types
-json
-os
-datetime
-threading
-requests[socks]
+beautifulsoup4
+pyTelegramBotAPI
+PySocks

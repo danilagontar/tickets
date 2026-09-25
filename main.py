@@ -11,7 +11,7 @@ import threading
 
 URL = "https://mediumquality.ru/natalnayakarta"
 BOT_TOKEN = "8152169533:AAFQrjkgvrDJ1lo5k-lHYO-TCZmPbEjrhDE"
-CHAT_IDS = ["431869701", "7903837799"]
+CHAT_IDS = ["431869701", "789916429"]
 LINKS_FILE = "known_links.json"
 
 apihelper.proxy = {
