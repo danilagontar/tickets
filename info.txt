@@ -1,0 +1,4 @@
+URL = "https://mediumquality.ru/natalnayakarta"
+BOT_TOKEN = "8152169533:AAFQrjkgvrDJ1lo5k-lHYO-TCZmPbEjrhDE"
+CHAT_ID = "431869701"
+LINKS_FILE = "known_links.json"
