@@ -12,6 +12,20 @@ from telebot.types import (
 )
 
 
+LOVE_MESSAGES = [
+    "❤️ Лерусь, я тебя очень люблю!",
+    "💕 Лерусь, ты самое прекрасное, что есть!",
+    "💖 Лерусь, ты делаешь мою жизнь счастливее!",
+    "🥰 Лерусь, ты просто чудо!",
+    "💘 Лерусь, моё сердце всегда с тобой!",
+    "🌹 Лерусь, ты прекрасна!",
+    "💗 Даня любит Лерусю!",
+    "🫶 Лерусь, это всё для тебя ❤️",
+    "💞 Люблю тебя, Лерусь!",
+    "❤️‍🔥 Лерусь — любовь навсегда!",
+]
+
+
 def register_handlers(
     alarm_manager,
 ):
@@ -32,6 +46,13 @@ def register_handlers(
             InlineKeyboardButton(
                 "ℹ️ Информация",
                 callback_data="menu_info",
+            )
+        )
+
+        keyboard.add(
+            InlineKeyboardButton(
+                "❤️ Люблю Лерусю",
+                callback_data="love_lerusa",
             )
         )
 
@@ -121,6 +142,32 @@ def register_handlers(
             chat_id=user_chat_id,
             message_id=call.message.message_id,
             reply_markup=keyboard,
+        )
+
+    @bot.callback_query_handler(
+        func=lambda call: call.data == "love_lerusa"
+    )
+    def love_lerusa(call):
+        user_chat_id = str(
+            call.message.chat.id
+        )
+
+        if user_chat_id not in CHAT_IDS:
+            return
+
+        import random
+
+        message = random.choice(
+            LOVE_MESSAGES
+        )
+
+        bot.answer_callback_query(
+            call.id
+        )
+
+        bot.send_message(
+            user_chat_id,
+            message,
         )
 
     @bot.message_handler(
