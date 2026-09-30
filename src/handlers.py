@@ -58,7 +58,7 @@ def register_handlers(
 
         keyboard.add(
             InlineKeyboardButton(
-                "ℹ️ Информация",
+                "ℹ️ Обновить",
                 callback_data="menu_info",
             )
         )
