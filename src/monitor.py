@@ -16,7 +16,10 @@ from storage import (
     save_known_links,
 )
 from telegram_client import send_message
-
+from monitor_state import (
+    set_check_error,
+    set_check_success,
+)
 
 HEADERS = {
     "User-Agent": (
@@ -91,7 +94,7 @@ def get_intickets_data():
             flush=True,
         )
 
-        return []
+        raise
 
 
 def build_alarm_message(
@@ -176,6 +179,8 @@ def monitor_tickets(
                 get_intickets_data()
             )
 
+            set_check_success()
+
             new_tickets = [
                 item
                 for item in current_data
@@ -224,6 +229,7 @@ def monitor_tickets(
                 )
 
         except Exception as error:
+            set_check_error(error)
             print(
                 f"[{current_time}] "
                 f"Ошибка мониторинга: "

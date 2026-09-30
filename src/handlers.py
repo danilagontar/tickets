@@ -1,4 +1,7 @@
+from datetime import datetime
+
 from config import CHAT_IDS
+from monitor_state import get_status
 from telegram_client import (
     bot,
     send_message,
@@ -49,16 +52,75 @@ def register_handlers(
         if user_chat_id not in CHAT_IDS:
             return
 
+        status = get_status()
+
+        keyboard = InlineKeyboardMarkup()
+
+        keyboard.add(
+            InlineKeyboardButton(
+                "ℹ️ Информация",
+                callback_data="menu_info",
+            )
+        )
+
+        if status["last_check"] is None:
+            last_check_text = (
+                "ещё не выполнялась"
+            )
+        else:
+            last_check_text = (
+                status["last_check"]
+                .strftime("%H:%M:%S")
+            )
+
+        if status["last_success"] is None:
+            last_success_text = (
+                "ещё не было"
+            )
+        else:
+            last_success_text = (
+                status["last_success"]
+                .strftime("%H:%M:%S")
+            )
+
+        if status["last_error"]:
+            monitor_status = (
+                "🔴 ошибка"
+            )
+
+            error_text = (
+                "\n\n"
+                "❌ Последняя ошибка:\n"
+                f"{status['last_error']}"
+            )
+        else:
+            monitor_status = (
+                "🟢 работает"
+            )
+
+            error_text = ""
+
+        text = (
+            "🖥 СТАТУС БОТА\n\n"
+            "🟢 Telegram: работает\n"
+            f"{monitor_status} "
+            "Мониторинг билетов\n"
+            f"🔄 Последняя попытка: "
+            f"{last_check_text}\n"
+            f"✅ Последняя успешная проверка: "
+            f"{last_success_text}"
+            f"{error_text}"
+        )
+
         bot.answer_callback_query(
             call.id
         )
 
         bot.edit_message_text(
-            "✅ Бот работает штатно. "
-            "Мониторинг билетов активен "
-            "в фоновом режиме!",
+            text,
             chat_id=user_chat_id,
             message_id=call.message.message_id,
+            reply_markup=keyboard,
         )
 
     @bot.message_handler(
@@ -79,7 +141,7 @@ def register_handlers(
         if stopped:
             send_message(
                 user_chat_id,
-                "✅ Понял! "
+                "✅ Понял Лерусь! "
                 "Сирена отключена.",
             )
 
@@ -94,7 +156,7 @@ def register_handlers(
             send_message(
                 user_chat_id,
                 "Сирена для тебя "
-                "и так выключена.",
+                "выключена, любимка",
             )
 
     @bot.message_handler(
