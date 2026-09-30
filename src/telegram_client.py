@@ -48,12 +48,12 @@ def set_bot_commands():
     try:
         bot.set_my_commands([
             BotCommand(
-                "stop",
-                "Отключить сирену",
+                "menu",
+                "Открыть меню",
             ),
             BotCommand(
-                "info",
-                "Проверить статус бота",
+                "stop",
+                "Отключить сирену",
             ),
         ])
 

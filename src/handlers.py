@@ -3,11 +3,64 @@ from telegram_client import (
     bot,
     send_message,
 )
+from telebot.types import (
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+)
 
 
 def register_handlers(
     alarm_manager,
 ):
+    @bot.message_handler(
+        commands=["menu"]
+    )
+    def show_menu(message):
+        user_chat_id = str(
+            message.chat.id
+        )
+
+        if user_chat_id not in CHAT_IDS:
+            return
+
+        keyboard = InlineKeyboardMarkup()
+
+        keyboard.add(
+            InlineKeyboardButton(
+                "ℹ️ Информация",
+                callback_data="menu_info",
+            )
+        )
+
+        bot.send_message(
+            user_chat_id,
+            "🖥 ГЛАВНОЕ МЕНЮ",
+            reply_markup=keyboard,
+        )
+
+    @bot.callback_query_handler(
+        func=lambda call: call.data == "menu_info"
+    )
+    def menu_info(call):
+        user_chat_id = str(
+            call.message.chat.id
+        )
+
+        if user_chat_id not in CHAT_IDS:
+            return
+
+        bot.answer_callback_query(
+            call.id
+        )
+
+        bot.edit_message_text(
+            "✅ Бот работает штатно. "
+            "Мониторинг билетов активен "
+            "в фоновом режиме!",
+            chat_id=user_chat_id,
+            message_id=call.message.message_id,
+        )
+
     @bot.message_handler(
         commands=["stop"]
     )
